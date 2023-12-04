@@ -1,4 +1,15 @@
 import express from "express";
+import conectaDatabase from "./config/dbConnect.js";
+
+const conexao = await conectaDatabase();
+
+conexao.on('error', (erro)=>{
+  console.error("erro de conexão", erro)
+})
+
+conexao.once('open', ()=>{
+  console.log("Conexao com o banco feita com sucesso")
+})
 
 const app = express();
 app.use(express.json());
@@ -44,4 +55,12 @@ app.put("/animes/:id", (req, res) => {
   res.status(200).json(animes);
 });
 
+app.delete("/animes/:id", (req,res) => {
+  const index = buscaAnime(req.params.id);
+  animes.splice(index, 1);
+  res.status(200).send("Anime removido com sucesso");
+});
+
 export default app;
+
+
